@@ -1,0 +1,88 @@
+{
+  "added_at": "2019-11-20T05:43:27Z",
+  "added_by": {
+    "external_urls": {
+      "spotify": "https://open.spotify.com/user/r_rugrat"
+    },
+    "href": "https://api.spotify.com/v1/users/r_rugrat",
+    "id": "r_rugrat",
+    "type": "user",
+    "uri": "spotify:user:r_rugrat"
+  },
+  "is_local": False,
+  "primary_color": None,
+  "track": {
+    "album": {
+      "album_type": "album",
+      "artists": [{
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/2RdwBSPQiwcmiDo9kixcl8"
+        },
+        "href": "https://api.spotify.com/v1/artists/2RdwBSPQiwcmiDo9kixcl8",
+        "id": "2RdwBSPQiwcmiDo9kixcl8",
+        "name": "Pharrell Williams",
+        "type": "artist",
+        "uri": "spotify:artist:2RdwBSPQiwcmiDo9kixcl8"
+      }],
+      "available_markets": ["AD", "AE", "AL", "AR", "AT", "AU", "BA", "BE", "BG", "BH", "BO", "BR", "BY", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "DZ", "EC", "EE", "EG", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HR", "HU", "ID", "IE", "IL", "IN", "IS", "IT", "JO", "JP", "KW", "KZ", "LB", "LI", "LT", "LU", "LV", "MA", "MC", "MD", "ME", "MK", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "OM", "PA", "PE", "PH", "PL", "PS", "PT", "PY", "QA", "RO", "RS", "RU", "SA", "SE", "SG", "SI", "SK", "SV", "TH", "TN", "TR", "TW", "UA", "US", "UY", "VN", "XK", "ZA"],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/0lrmy4pJINsFzycJvttX2W"
+      },
+      "href": "https://api.spotify.com/v1/albums/0lrmy4pJINsFzycJvttX2W",
+      "id": "0lrmy4pJINsFzycJvttX2W",
+      "images": [{
+        "height": 640,
+        "url": "https://i.scdn.co/image/ab67616d0000b273e8107e6d9214baa81bb79bba",
+        "width": 640
+      }, {
+        "height": 300,
+        "url": "https://i.scdn.co/image/ab67616d00001e02e8107e6d9214baa81bb79bba",
+        "width": 300
+      }, {
+        "height": 64,
+        "url": "https://i.scdn.co/image/ab67616d00004851e8107e6d9214baa81bb79bba",
+        "width": 64
+      }],
+      "name": "G I R L",
+      "release_date": "2014-03-03",
+      "release_date_precision": "day",
+      "total_tracks": 11,
+      "type": "album",
+      "uri": "spotify:album:0lrmy4pJINsFzycJvttX2W"
+    },
+    "artists": [{
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/2RdwBSPQiwcmiDo9kixcl8"
+      },
+      "href": "https://api.spotify.com/v1/artists/2RdwBSPQiwcmiDo9kixcl8",
+      "id": "2RdwBSPQiwcmiDo9kixcl8",
+      "name": "Pharrell Williams",
+      "type": "artist",
+      "uri": "spotify:artist:2RdwBSPQiwcmiDo9kixcl8"
+    }],
+    "available_markets": ["AD", "AE", "AL", "AR", "AT", "AU", "BA", "BE", "BG", "BH", "BO", "BR", "BY", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "DZ", "EC", "EE", "EG", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HR", "HU", "ID", "IE", "IL", "IN", "IS", "IT", "JO", "JP", "KW", "KZ", "LB", "LI", "LT", "LU", "LV", "MA", "MC", "MD", "ME", "MK", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "OM", "PA", "PE", "PH", "PL", "PS", "PT", "PY", "QA", "RO", "RS", "RU", "SA", "SE", "SG", "SI", "SK", "SV", "TH", "TN", "TR", "TW", "UA", "US", "UY", "VN", "XK", "ZA"],
+    "disc_number": 1,
+    "duration_ms": 232720,
+    "episode": False,
+    "explicit": False,
+    "external_ids": {
+      "isrc": "USQ4E1300686"
+    },
+    "external_urls": {
+      "spotify": "https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH"
+    },
+    "href": "https://api.spotify.com/v1/tracks/60nZcImufyMA1MKQY3dcCH",
+    "id": "60nZcImufyMA1MKQY3dcCH",
+    "is_local": False,
+    "name": "Happy - From "Despicable Me 2"",
+    "popularity": 80,
+    "preview_url": "https://p.scdn.co/mp3-preview/67cffdcb7e3c82a5eb2e5f0bb235d377ccc94eeb?cid=8959caa64533431aa4078b0e99ef8f7e",
+    "track": True,
+    "track_number": 5,
+    "type": "track",
+    "uri": "spotify:track:60nZcImufyMA1MKQY3dcCH"
+  },
+  "video_thumbnail": {
+    "url": None
+  }
+}
