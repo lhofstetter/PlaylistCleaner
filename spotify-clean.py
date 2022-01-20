@@ -9,59 +9,62 @@ parser.add_argument("playlist_name")
 
 args = parser.parse_args()
 
-def main():
-    username = args.username
-    playlist_name = args.playlist_name
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="INSERT_CLIENT_ID_HERE",
+                                               client_secret="INSERT_CLIENT_SECRET_HERE",
+                                               redirect_uri="http://localhost:8888/callback",
+                                               scope="user-library-modify playlist-modify-public"))
 
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id="INSERT_CLIENT_ID",
-                                                   client_secret="INSERT_CLIENT_SECRET",
-                                                   redirect_uri="http://localhost:8888/callback",
-                                                   scope="user-library-modify playlist-modify-public"))
+def clean_playlist(playlist_name, username):
     explicit_songs = 0
     search_time = 0
     saved_id = ""
-    user_id = sp.user(username)['id']
-    playlist = None  # assign a variable that will be playlist that we clean
 
-    # loops through the users followed playlists to check for already cleaned playlists of same name
+    # loops through the users followed playlists to check for already cleaned playlists
     for item in sp.current_user_playlists()['items']:
-        if playlist_name + ' [clean]' in item['name']:
-            saved_id = item['id']  # saves id (playlist should be deleted when unfollowed, but issue with rapidly deleting and remaking playlist of same name leaves "ghost" playlists)
-            sp.current_user_unfollow_playlist(saved_id)  # actually unfollows the playlist so it disappears from users library
-        if playlist_name in item['name']:
-            playlist = item
+        if playlist_name in item['name'] and "[clean]" in item['name'] and username in item['owner']['id']:
+            saved_id = item['id']  # saves id (playlist should be deleted when unfollowed, but issue with rapidly deleting and remaking playlist of same name leaves "ghost" playlist
+            break
 
-    if playlist is None:
-        playlist_search = sp.search(playlist_name, type='playlist')  # fetches search results for playlist_name
-        for playlist_itr in playlist_search['playlists']['items']:
-            if playlist_itr['id'] in saved_id or 'Daily Wellness' in \
-                    playlist_itr['name']:  # Daily Wellness check is for bug with Daily Mix cleaning
-                continue
+    user_id = sp.user(username)['id']
+    playlist_search = sp.search(playlist_name, type='playlist')  # fetches search results for
+    playlist = None  # actual playlist that will end up being passed
+    for playlist_itr in playlist_search['playlists']['items']:
+        if playlist_itr['id'] in saved_id:
+            continue
+        elif saved_id != "":
+            playlist = playlist_itr
+            current_playlist_tracks = sp.playlist_items(saved_id, limit=10, additional_types=['track'])['items']
+            possible_new_playlist = sp.playlist_items(playlist['id'], limit=10, additional_types=['track'])['items']
+
+            for i in range(0, len(current_playlist_tracks)):
+                del current_playlist_tracks[i]['added_at']
+                del current_playlist_tracks[i]['added_by']
+                del possible_new_playlist[i]['added_at']
+                del possible_new_playlist[i]['added_by']
+
+            if current_playlist_tracks == possible_new_playlist:
+                return saved_id
             else:
-                if playlist_itr['name'].lower() == playlist_name.lower():
-                    playlist = playlist_itr
-                    break
-                elif playlist_itr['name'] is playlist_search['playlists']['items'][len(playlist_search['playlists']['items']) - 1]['name']:
-                    print("Playlist not found. Please ensured that you have entered the name of the playlist correctly (case sensitive).")
-                    return
+                sp.current_user_unfollow_playlist(saved_id)  # actually unfollows the playlist so it disappears from users library
+                break
+        else:
+            playlist = playlist_itr
+            break
 
-    playlist_length = int(playlist['tracks']['total'])
-    uri_playlist = sp.user_playlist_create(user_id, playlist['name'] + " [clean]", public=True, collaborative=False,
-                                           description="clean version of " + playlist['name'] + ". Please be reminded that any songs without clean versions were not added to the playlist.")[
-        'id']
+    uri_playlist = sp.user_playlist_create(user_id, playlist['name'] + " [clean]", public=True, collaborative=False, description="clean version of " + playlist_search['playlists']['items'][0]['name'] + ". Please be reminded that any songs without clean versions were not added to the playlist.")['id']
 
-    for i in range(playlist_length):
-        track = sp.playlist_items(playlist['uri'], limit=1, offset=i, additional_types=[
-            'track'])['items'][0]['track']
+    tracks = sp.playlist_items(playlist['uri'], additional_types=[
+                          'track'])['items']
+
+    for track in tracks:
+        track = track['track']
         if track['explicit']:
             start_time = time.time()
             track_name = track['name']  # grabs track name for search
-            artist = track['artists'][0][
-                'name']  # pulls artist name to narrow down results (eliminate extraneous songs of same name)
-            search = sp.search(track_name + " artist:" + artist, limit=10,
-                               type='track')  # query for all tracks with that name and by that artist
+            artist = track['artists'][0]['name']  # pulls artist name to narrow down results (eliminate extraneous songs of same name)
+            search = sp.search(track_name + " artist:" + artist, limit=10, type='track')  # query for all tracks with that name and by that artist
 
-            # keeps list to the top ten results - if a non-explict track is not found within these first ten results, likely no non-explicit track is offered
+        # keeps list to the top ten results - if a non-explict track is not found within these first ten results, likely no non-explicit track is offered
             for new_track in search['tracks']['items']:
                 if new_track['artists'][0]['name'] != track['artists'][0]['name'] or new_track['explicit']:
                     continue
@@ -78,8 +81,47 @@ def main():
     else:
         print("No explicit songs found.")
 
+    return uri_playlist
+
+def main():
+    username = args.username
+    playlist_name = args.playlist_name
+
+    avg_danceability = 0.0
+    avg_energy = 0.0
+    avg_loudness = 0.0
+    avg_speechiness = 0.0
+    avg_acousticness = 0.0
+    avg_instrumentalness = 0.0
+
+    id = clean_playlist(playlist_name, username)
+    tracks = sp.playlist_items(id, additional_types=['track'])['items']
+
+    track_uri_list = []
+
+    for track in tracks:
+        track_uri_list.append(track['track']['uri'])
+    track_stats = sp.audio_features(track_uri_list)
+    list_length = len(track_stats)
+
+    for i in range(0, list_length - 1):
+        if track_stats[i] is None:
+            print(track_uri_list[i])
+        else:
+            avg_danceability += float(track_stats[i]['danceability'])
+            avg_energy += float(track_stats[i]['energy'])
+            avg_loudness += track_stats[i]['loudness']
+            avg_speechiness += float(track_stats[i]['speechiness'])
+            avg_acousticness += float(track_stats[i]['acousticness'])
+            avg_instrumentalness += float(track_stats[i]['instrumentalness'])
+
+    print("This playlist has an average danceability of: " + str((avg_danceability / list_length) * 100) + "%")
+    print("This playlist has an average energy of: " + str((avg_energy / list_length) * 100) + "%")
+    print("This playlist has an average loudness of: " + str(avg_loudness / list_length) + " db")
+    print("This playlist has an average speechiness of: " + str((avg_speechiness / list_length) * 100) + "%")
+    print("This playlist has an average acousticness of: " + str((avg_acousticness / list_length) * 100) + "%")
+    print("This playlist has an average instrumentalness of: " + str((avg_speechiness / list_length) * 100) + "%")
+
 
 if __name__ == '__main__':
-    main_start_time = time.time()
     main()
-    print("Time to process playlist: " + str(time.time() - main_start_time) + " seconds")
